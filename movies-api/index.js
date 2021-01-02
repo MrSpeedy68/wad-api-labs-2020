@@ -4,7 +4,9 @@ import bodyParser from 'body-parser';
 import moviesRouter from './api/movies';
 import genresRouter from './api/genres';
 import './db';
-import {loadUsers} from './seedData'
+import {loadUsers} from './seedData';
+import session from 'express-session';
+import authenticate from './authenticate';
 
 //Other imports
 import usersRouter from './api/users';
@@ -29,6 +31,8 @@ if (process.env.SEED_DB) {
     loadUsers();
 }
 
+
+
 //configure body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
@@ -37,8 +41,18 @@ app.use(express.static('public'));
 app.use('/api/movies', moviesRouter);
 app.use('/api/genres', genresRouter);
 
+//session middleware
+app.use(session({
+  secret: 'ilikecake',
+  resave: true,
+  saveUninitialized: true
+}));
+
 //Users router
 app.use('/api/users', usersRouter);
+
+//update /api/Movie route
+app.use('/api/movies', authenticate, moviesRouter);
 
 app.use(errHandler);
 
