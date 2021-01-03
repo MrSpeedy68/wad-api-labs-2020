@@ -6,7 +6,7 @@ import genresRouter from './api/genres';
 import './db';
 import {loadUsers} from './seedData';
 import session from 'express-session';
-import authenticate from './authenticate';
+import passport from './authenticate';
 
 //Other imports
 import usersRouter from './api/users';
@@ -31,7 +31,8 @@ if (process.env.SEED_DB) {
     loadUsers();
 }
 
-
+// initialise passport​
+app.use(passport.initialize());
 
 //configure body-parser
 app.use(bodyParser.json());
@@ -41,6 +42,8 @@ app.use(express.static('public'));
 app.use('/api/movies', moviesRouter);
 app.use('/api/genres', genresRouter);
 
+
+
 //session middleware
 app.use(session({
   secret: 'ilikecake',
@@ -48,11 +51,16 @@ app.use(session({
   saveUninitialized: true
 }));
 
+// Add passport.authenticate(..)  to middleware stack for protected routes​
+app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
+
+
 //Users router
 app.use('/api/users', usersRouter);
 
 //update /api/Movie route
-app.use('/api/movies', authenticate, moviesRouter);
+//app.use('/api/movies', authenticate, moviesRouter);
+
 
 app.use(errHandler);
 
