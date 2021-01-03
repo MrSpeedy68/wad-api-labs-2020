@@ -8,7 +8,6 @@ const SignUpPage = props => {
   const register = () => {
       setRegistered(true) 
     }
-
   const { from } = props.location.state || { from: { pathname: "/" } };
 
   if (registered === true) {
