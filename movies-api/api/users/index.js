@@ -61,7 +61,7 @@ router.post('/:userName/favourites', async (req, res, next) => {
   const user = await User.findByUserName(userName);
   await user.favourites.push(movie._id);
   await user.save(); 
-  res.status(201).json(user); 
+  res.status(201).json(user).catch(next); 
 });
 
 // Update a user
