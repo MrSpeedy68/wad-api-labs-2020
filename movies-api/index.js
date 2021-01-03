@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import moviesRouter from './api/movies';
 import genresRouter from './api/genres';
 import './db';
-import {loadUsers} from './seedData';
+import {loadUsers, loadMovies} from './seedData';
 import session from 'express-session';
 import passport from './authenticate';
 
@@ -28,10 +28,11 @@ const app = express();
 const port = process.env.PORT;
 
 if (process.env.SEED_DB) {
-    loadUsers();
+  loadUsers();
+  loadMovies();
 }
 
-// initialise passport​
+//initialise passport
 app.use(passport.initialize());
 
 //configure body-parser
@@ -51,7 +52,7 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// Add passport.authenticate(..)  to middleware stack for protected routes​
+// Add passport.authenticate(..) to middleware stack for protected routes
 app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
 
 
